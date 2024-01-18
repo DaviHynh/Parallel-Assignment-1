@@ -46,6 +46,11 @@ int main(void)
     int total = 100000000;
     std::vector<std::thread> pool;
 
+
+    // This isn't the correct implementation because it spawns way too many threads.
+    // There should only be 8 threads to work with.
+    // This method spawns/destroys a thread for each number, which leads to poor runtime.
+
     // Loop to check all numbers up to total.
     while (num < total)
     {
@@ -76,7 +81,7 @@ int main(void)
 
     // Maybe you spawn 8 threads, and give them all a shared counter.
     // That way, they can each take a number from the counter, and check for a prime number.
-    // Each thread will have a while loop? to 100000000.
+    // Each thread will have a while loop to 100000000.
     // and we join the threads at the end in the main function.
 
     // 1. Create a vector with 8 threads.
