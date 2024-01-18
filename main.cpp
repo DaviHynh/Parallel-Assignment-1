@@ -4,11 +4,20 @@
 #include <fstream>
 #include <thread>
 #include <vector>
+#include <mutex>
+#include <cmath>
+
+
+std::mutex myMutex;
+
+int numPrimes = 1;
+
 
 // Function to check if a number is prime.
 bool isPrime(int n)
 {
-    for (int i = 2; i < n - 1; i++)
+    // Check for a prime number.
+    for (int i = 2; i < sqrt(n); i++)
     {
         if (n % i == 0)
         {
@@ -16,7 +25,10 @@ bool isPrime(int n)
         }
     }
 
-    std::cout << n << " is prime.\n";
+    // Preserves mutual exclusion.
+    myMutex.lock();
+    numPrimes++;
+    myMutex.unlock();
 
     return true;
 }
@@ -29,108 +41,49 @@ int main(void)
     auto start = high_resolution_clock::now();
 
 
-    std::thread t1(isPrime, 12345);
-    std::thread t2(isPrime, 123456);
-    std::thread t3(isPrime, 174407);
-
-    t1.join();
-    t2.join();
-    t3.join();
-
-
-    // Start the counter at 2, since 0 and 1 cannot be prime.
-    // Could also make it so that if a number is even, we skip and don't spawn a thread for that number.
-    std::atomic<int> counter = 2;
-
+    int num = 3;
+    // 100000000
+    int total = 100000000;
     std::vector<std::thread> pool;
 
-    while (counter < 100)
+    // Loop to check all numbers up to total.
+    while (num < total)
     {
+        // Add threads until we hit 8 threads, or we exceed our count.
+        while (num < total && pool.size() < 8)
+        {
+            if (num % 2 == 0)
+            {
+                num++;
+            }
 
-        // if (threadcount < 8)
-        // {
-        //     spawn a thread
-        // }
+            std::cout << "Computing: " << num << "\n";
 
-        // only issue is that at the end, we need to ensure we finish before finishing main.
-        // we need to join or detach.
-        // think we need to use join for a thread.
+            pool.push_back(std::thread(isPrime, num++));
+        }
 
-        
+        // Join each thread after computing for a prime number.
         for (auto &t : pool)
         {
             t.join();
         }
+
+        pool.clear();
     }
 
-    // Need to ensure that the thread count doesn't exceed 8.
+    std::cout << "Num Primes: " << numPrimes << "\n";
 
 
+    // Maybe you spawn 8 threads, and give them all a shared counter.
+    // That way, they can each take a number from the counter, and check for a prime number.
+    // Each thread will have a while loop? to 100000000.
+    // and we join the threads at the end in the main function.
 
-    // Could A:
-    // Spawn 8 threads at the same time, then join.
-    // Or spawn a thread whenever we don't have a total of 8 threads.
-
-    // cant increment a counter after a thread, have to do it before?
-    // we assign the counter to a variable, and check it, so yes we do increment it before we spawn a thread.
-
-
-
-
-
-
-    // for (int i = 2; i < 10; i++)
-    // {
-    //     std::cout << n << " is Prime: " << (isPrime(n) ? "True" : "False") << "\n";
-    // }
-
-
-    // maybe you want a while loop, and check if a thread is empty.
-    // Create a vector of size 8
-    // if a thread is not joinable, remove it, and add another one?
-    // So we have a pool to 8 threads, --> while one of them is empty --> start a function with an number and increment it.
-    // we can break out of the loop once the 
-
-    // while (!tPool[0].joinable())
-    // {
-
-    // }
-
-
-    // std::thread t1(isPrime, 10);
-
-    // Either give each thread some numbers, or alternate between threads?
-
-    // Maybe at the end of the thread, just place it at the front most of a data structure or something?
-    // 
-
-
-
-    // // Array for sieve.
-    // std::vector<bool> test(100000000, true);
-
-    // // Loop though. (this works for finding prime numbers. now find a way to get it paralleld)
-    // for (int i = 2; i < 10000; i++)
-    // {
-    //     if (test[i] == true)
-    //     {
-    //         // start a thread here.
-    //         // Spawn a thread for a number
-    //         // in that thread, calculate and update the array.
-    //         // there is an issue with concurrency, and having threads collide
-    //         // could use something else to prevent this, so that if the threads to collide, we just move on.
-
-
-    //         for (int j = i; j < 10000; j++)
-    //         {
-    //             test[j * i] = false;
-    //         }
-    //     }
-    // }
-
-
-
-
+    // 1. Create a vector with 8 threads.
+    // 2. Each thread will be given a function.
+    // --> This function loops from (shared counter) to 100000000.
+    // --> Each thread will access (shared counter), grab a number, up the counter, and then check if the number it grabbed was prime.
+    // This way, we aren't spawning and destroying a million threads!
 
 
 
