@@ -5,19 +5,67 @@
 #include <thread>
 #include <vector>
 #include <mutex>
+#include <shared_mutex>
 #include <cmath>
 
+// Counter class to track information.
+class Counter
+{
+private:
+    std::shared_mutex myMutex;
+    int num;
+    int primesFound;
+    std::vector<int> lastTen;
 
-std::mutex myMutex;
+public:
+    Counter()
+    {
+        num = 3;
+        primesFound = 1;
+    }
 
-int numPrimes = 1;
+    int getAndIncrement()
+    {
+        std::unique_lock lock(myMutex);
+        return num++;
+    }
+
+    void updatePrimeCountAndLastTen(int numToAdd)
+    {
+        std::unique_lock lock(myMutex);
+        primesFound++;
+
+        if (lastTen.size() < 10)
+        {
+            lastTen.push_back(numToAdd);
+        }
+        else
+        {
+            lastTen.erase(lastTen.begin());
+            lastTen.push_back(numToAdd);
+        }
+    }
+
+    void printInfo()
+    {
+        std::cout << "Num: " << num << "\n";
+        std::cout << "Primes Found: " << primesFound << "\n";
+        std::cout << "Last 10: ";
+
+        for (auto &i : lastTen)
+        {
+            std::cout << i << " ";
+        }
+
+        std::cout << "\n";
+    }
+};
 
 
-// Function to check if a number is prime.
 bool isPrime(int n)
 {
     // Check for a prime number.
-    for (int i = 2; i < sqrt(n); i++)
+    for (int i = 2; i * i <= n; i++)
     {
         if (n % i == 0)
         {
@@ -25,13 +73,27 @@ bool isPrime(int n)
         }
     }
 
-    // Preserves mutual exclusion.
-    myMutex.lock();
-    numPrimes++;
-    myMutex.unlock();
-
     return true;
 }
+
+// Counts the total number of primes.
+void countPrimes(Counter &sharedCounter, int range)
+{
+    int curr = 0;
+
+    while ((curr = sharedCounter.getAndIncrement()) < range)
+    {
+        if ((curr % 2) == 0)
+        {
+            continue;
+        }
+        else if (isPrime(curr))
+        {
+            sharedCounter.updatePrimeCountAndLastTen(curr);
+        }
+    }
+}
+
 
 int main(void)
 {
@@ -40,62 +102,24 @@ int main(void)
     // Starting program timer.
     auto start = high_resolution_clock::now();
 
+    // 10^8 Numbers = 100000000
+    int range = 100000000;
+    Counter sharedCounter;
+    std::vector<std::thread> pool(8);
 
-    int num = 3;
-    // 100000000
-    int total = 100000000;
-    std::vector<std::thread> pool;
-
-
-    // This isn't the correct implementation because it spawns way too many threads.
-    // There should only be 8 threads to work with.
-    // This method spawns/destroys a thread for each number, which leads to poor runtime.
-
-    // Loop to check all numbers up to total.
-    while (num < total)
+    // Start each thread.
+    for (auto &t : pool)
     {
-        // Add threads until we hit 8 threads, or we exceed our count.
-        while (num < total && pool.size() < 8)
-        {
-            if (num % 2 == 0)
-            {
-                num++;
-            }
-
-            std::cout << "Computing: " << num << "\n";
-
-            pool.push_back(std::thread(isPrime, num++));
-        }
-
-        // Join each thread after computing for a prime number.
-        for (auto &t : pool)
-        {
-            t.join();
-        }
-
-        pool.clear();
+        t = std::thread(countPrimes, std::ref(sharedCounter), range);
     }
 
-    std::cout << "Num Primes: " << numPrimes << "\n";
+    // Join each thread before finishing the program.
+    for (auto &t : pool)
+    {
+        t.join();
+    }
 
-
-    // Maybe you spawn 8 threads, and give them all a shared counter.
-    // That way, they can each take a number from the counter, and check for a prime number.
-    // Each thread will have a while loop to 100000000.
-    // and we join the threads at the end in the main function.
-
-    // 1. Create a vector with 8 threads.
-    // 2. Each thread will be given a function.
-    // --> This function loops from (shared counter) to 100000000.
-    // --> Each thread will access (shared counter), grab a number, up the counter, and then check if the number it grabbed was prime.
-    // This way, we aren't spawning and destroying a million threads!
-
-
-
-
-
-
-
+    sharedCounter.printInfo();
 
     // Ending program timer.
     auto end = high_resolution_clock::now();
