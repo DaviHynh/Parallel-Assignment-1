@@ -97,9 +97,10 @@ void findMultiples(int range, Counter &sharedCounter)
     }
 }
 
+// Main function that spawns 8 threads, starts an execution timer, and prints output to primes.txt.
 int main(void)
 {
-    // 100000000
+    // Calculating 10^8 numbers = 100000000.
     int range = 100000000;
     Counter sharedCounter(range);
     std::vector<std::thread> pool(8);
@@ -125,17 +126,17 @@ int main(void)
     auto executionTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
 
     // Outputting results to primes.txt.
-    std::ofstream output("primes.txt");
     std::vector<unsigned long int> res = sharedCounter.getInformation();
+    std::ofstream output("primes.txt");
 
     output << "Execution Time: " << executionTime.count() << " Seconds, ";
     output << "Total Primes Found: " << res[0] << ", ";
-    output << "Sum of Primes Found: " << res[1] << std::endl << std::endl;
-    output << "Top 10 Max Primes:" << std::endl;
+    output << "Sum of Primes Found: " << res[1] << "\n\n";
+    output << "Top 10 Max Primes:" << "\n";
 
     for (int i = res.size() - 1; i >= 2; i--)
     {
-        output << res[i] << std::endl;
+        output << res[i] << "\n";
     }
 
     output.close();
