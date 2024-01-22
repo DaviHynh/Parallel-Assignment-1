@@ -1,3 +1,6 @@
+// David Huynh
+// COP 4520 - Spring, 2024
+
 #include <iostream>
 #include <atomic>
 #include <chrono>
