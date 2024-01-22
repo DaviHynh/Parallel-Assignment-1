@@ -1,5 +1,10 @@
-# Parallel-Assignment-1
+# COP4520 Programming Assignment 1
 
-Source files for programming assignment one.
+- [Compile Instructions](#Compile-Instructions)
+
+- [Documentation](#Documentation)
 
 ## Compile Instructions
+
+## Documentation
+
