@@ -6,128 +6,138 @@
 #include <vector>
 #include <mutex>
 #include <shared_mutex>
-#include <cmath>
 
-// Counter class to track information.
+// Counter class to track information on the Sieve of Eratosthenes.
 class Counter
 {
 private:
     std::shared_mutex myMutex;
+    std::vector<std::atomic<bool>> primes;
     int num;
-    int primesFound;
-    std::vector<int> lastTen;
 
 public:
-    Counter()
+    // Constructs a counter with a given range. Sets num to 2 for the sieve.
+    Counter(int range) : primes(range)
     {
-        num = 3;
-        primesFound = 1;
+        num = 2;
     }
 
+    // Returns the bool at the specified position.
+    char checkPosition(int position)
+    {
+        std::shared_lock lock(myMutex);
+        return primes[position];
+    }
+
+    // Grabs from the counter and increments it.
     int getAndIncrement()
     {
         std::unique_lock lock(myMutex);
         return num++;
     }
 
-    void updatePrimeCountAndLastTen(int numToAdd)
+    // Sets a position to true. Each bool is atomic, preventing multiple threads from writing at the same time.
+    void setTrue(int position)
     {
-        std::unique_lock lock(myMutex);
-        primesFound++;
-
-        if (lastTen.size() < 10)
-        {
-            lastTen.push_back(numToAdd);
-        }
-        else
-        {
-            lastTen.erase(lastTen.begin());
-            lastTen.push_back(numToAdd);
-        }
+        primes[position] = true;
     }
 
-    void printInfo()
+    // Returns total primes found, sum primes found, and top ten max primes.
+    std::vector<unsigned long int> getInformation()
     {
-        std::cout << "Num: " << num << "\n";
-        std::cout << "Primes Found: " << primesFound << "\n";
-        std::cout << "Last 10: ";
+        int n = primes.size();
+        std::vector<unsigned long int> result;
 
-        for (auto &i : lastTen)
+        unsigned long int numOfPrimes = 0;
+        unsigned long int sumOfPrimes = 0;
+
+        // Calculates the number of all primes found and their sum.
+        for (int i = 2; i < n; i++)
         {
-            std::cout << i << " ";
+            if (primes[i] == 0)
+            {
+                numOfPrimes++;
+                sumOfPrimes += i;
+            }
         }
 
-        std::cout << "\n";
+        result.push_back(numOfPrimes);
+        result.push_back(sumOfPrimes);
+
+        // Finds the top 10 max primes.
+        for (int i = n - 1; i >= 2; i--)
+        {
+            if (result.size() < 12 && primes[i] == 0)
+            {
+                result.push_back(i);
+            }
+        }
+
+        return result;
     }
 };
 
-
-bool isPrime(int n)
-{
-    // Check for a prime number.
-    for (int i = 2; i * i <= n; i++)
-    {
-        if (n % i == 0)
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-// Counts the total number of primes.
-void countPrimes(Counter &sharedCounter, int range)
+// Each thread takes a number from the counter, and generates the multiples for it.
+void findMultiples(int range, Counter &sharedCounter)
 {
     int curr = 0;
 
-    while ((curr = sharedCounter.getAndIncrement()) < range)
+    // Loop through the sieve until i^2 < range.
+    while (((curr = sharedCounter.getAndIncrement()) * curr) < range)
     {
-        if ((curr % 2) == 0)
+        // Check if we should generate primes for this number.
+        if (sharedCounter.checkPosition(curr) == false)
         {
-            continue;
-        }
-        else if (isPrime(curr))
-        {
-            sharedCounter.updatePrimeCountAndLastTen(curr);
+            // Set all multiples for this number to true.
+            for (int i = curr * curr; i < range; i += curr)
+            {
+                sharedCounter.setTrue(i);
+            }
         }
     }
 }
 
-
 int main(void)
 {
-    using namespace std::chrono;
-
-    // Starting program timer.
-    auto start = high_resolution_clock::now();
-
-    // 10^8 Numbers = 100000000
+    // 100000000
     int range = 100000000;
-    Counter sharedCounter;
+    Counter sharedCounter(range);
     std::vector<std::thread> pool(8);
 
-    // Start each thread.
+    // Starting execution timer prior to spawning threads.
+    auto start = std::chrono::high_resolution_clock::now();
+
+
+    // Spawn 8 threads for the Sieve of Eratosthenes.
     for (auto &t : pool)
     {
-        t = std::thread(countPrimes, std::ref(sharedCounter), range);
+        t = std::thread(findMultiples, range, std::ref(sharedCounter));
     }
 
-    // Join each thread before finishing the program.
     for (auto &t : pool)
     {
         t.join();
     }
 
-    sharedCounter.printInfo();
 
-    // Ending program timer.
-    auto end = high_resolution_clock::now();
-    auto executionTime = duration_cast<duration<double>>(end - start);
+    // Ending execution timer after threads complete.
+    auto end = std::chrono::high_resolution_clock::now();
+    auto executionTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
 
-    // Outputting results.
+    // Outputting results to primes.txt.
     std::ofstream output("primes.txt");
-    output << "Execution Time: " << executionTime.count() << " Seconds" << std::endl;
+    std::vector<unsigned long int> res = sharedCounter.getInformation();
+
+    output << "Execution Time: " << executionTime.count() << " Seconds, ";
+    output << "Total Primes Found: " << res[0] << ", ";
+    output << "Sum of Primes Found: " << res[1] << std::endl << std::endl;
+    output << "Top 10 Max Primes:" << std::endl;
+
+    for (int i = res.size() - 1; i >= 2; i--)
+    {
+        output << res[i] << std::endl;
+    }
+
     output.close();
 
     return 0;
