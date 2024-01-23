@@ -11,10 +11,10 @@
 ## Program Documentation
 My program uses the Sieve of Eratosthenes to generate all the prime numbers from 1 to 10^8.
 Each of the threads share a counter, and they are each given a unique number.
-The threads then check to see if that number is false in the vector.
-If the number is false, the thread calculates the multiples for that number, and sets the positions to true in the vector.
+The threads then check to see if that number is false in the boolean vector.
+If the number is false, the thread calculates the multiples for that number, and sets the positions to true in the boolean vector.
 If the number is true, the thread moves on to the next number.
-At the end, we loop through the vector to calculate the number/sum of primes, and the top 10 max primes.
+At the end, the program loops through the boolean vector to calculate the number of primes, sum of primes, and the top 10 max primes.
 
 The Counter class tracks information about the sieve and includes variables like a shared_mutex, a vector of atomic bool, and an integer num.
 The shared_mutex is used to prevent deadlocking and preserve mutual exclusion for the integer num.
@@ -34,6 +34,9 @@ Compared to brute force, the Sieve of Eratosthenes runs much more efficiently.
 There is less computation for the sieve compared to brute forcing.
 However, the space complexity for the sieve is much greater.
 
+There are some concerns with repeated computation when a thread checks an index set to false, before it is updated by another thread to true.
+However, this repeated computation does not affect the final result, since it continues to eliminate multiples.
+Additionally, this concern is rarely problematic since each thread begins sequentially, and multiples are often eliminated before the counter increments.
 
 ## Compile Instructions
 These instructions assume you have a UCF account. To compile without one, check out the third section.
