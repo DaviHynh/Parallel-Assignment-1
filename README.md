@@ -1,11 +1,19 @@
 # COP4520 Programming Assignment 1
 
+### [Documentation](#Program-Documentation)
+
 ### [Compile Instructions](#Compile-Instructions)
 - #### [Windows on Eustis3](#Compiling-for-Windows-on-Eustis3)
 - #### [Mac/Linux on Eustis3](#Compiling-for-Linux-or-Mac-on-Eustis3)
 - #### [Local Machine](#Compiling-for-Local-Machine)
 
-### [Documentation](#Documentation-for-Program)
+
+## Program Documentation
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+
+
+
 
 ## Compile Instructions
 These instructions assume you have a UCF account. To compile without one, check out the third section.
@@ -38,7 +46,7 @@ These instructions assume you have a UCF account. To compile without one, check 
 3. Download main.cpp from this repository.
 4. Open a NEW terminal, and `cd` into the directory with main.cpp.
 5. Transfer that file to eustis3 by doing `scp main.cpp YOUR_NID@eustis3.eecs.ucf.edu:~/`. Retype password when prompted.
-6. On the terminal connected to eustis3, cd into the directory with main.cpp.
+6. On the terminal connected to eustis3, `cd` into the directory with main.cpp.
 6. Run `g++ main.cpp` and then run `./a.out` on the command line.
 
 
@@ -62,7 +70,3 @@ MacOS --> Google: `how to install g++ on mac` and follow those steps.
 **Other OS**
 1. Figure out a way to install the g++ compiler on your OS.
 2. Compile main.cpp using `g++ main.cpp` and run it using `./a.out`.
-
-
-## Documentation for Program
-
