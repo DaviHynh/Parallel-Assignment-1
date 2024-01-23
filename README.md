@@ -2,10 +2,10 @@
 
 ### [Compile Instructions](#Compile-Instructions)
 - #### [Windows on Eustis3](#Compiling-for-Windows-on-Eustis3)
-- #### [Mac/Linux on Eustis3](#Compiling-for-Mac-Linux-on-Eustis3)
+- #### [Mac/Linux on Eustis3](#Compiling-for-Linux-or-Mac-on-Eustis3)
 - #### [Local Machine](#Compiling-for-Local-Machine)
 
-### [Documentation](#Documentation)
+### [Documentation](#Documentation-for-Program)
 
 ## Compile Instructions
 These instructions assume you have a UCF account. To compile without one, check out the third section.
@@ -30,7 +30,7 @@ These instructions assume you have a UCF account. To compile without one, check 
 
 
 
-### Compiling for Mac/Linux on Eustis3
+### Compiling for Linux or Mac on Eustis3
 
 0. (If necessary) Set up the UCF VPN.
 1. Open a terminal window and type `YOURNID@eustis3.eecs.ucf.edu` to connect to eustis3. Use your actual NID instead of YOURNID.
@@ -64,5 +64,5 @@ MacOS --> Google: `how to install g++ on mac` and follow those steps.
 2. Compile main.cpp using `g++ main.cpp` and run it using `./a.out`.
 
 
-## Documentation
+## Documentation for Program
 
