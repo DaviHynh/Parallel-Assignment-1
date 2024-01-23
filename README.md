@@ -16,7 +16,7 @@ These instructions assume you have a UCF account. To compile without one, check 
 4. Login to establish a VPN connection.
 
 
-### Compiling for Windows on Eustis3
+## Compiling for Windows on Eustis3
 
 0. (If necessary) Set up the UCF VPN.
 1. Download and open MobaXterm from https://mobaxterm.mobatek.net/.
@@ -30,7 +30,7 @@ These instructions assume you have a UCF account. To compile without one, check 
 
 
 
-### Compiling for Linux or Mac on Eustis3
+## Compiling for Linux or Mac on Eustis3
 
 0. (If necessary) Set up the UCF VPN.
 1. Open a terminal window and type `YOURNID@eustis3.eecs.ucf.edu` to connect to eustis3. Use your actual NID instead of YOURNID.
@@ -42,7 +42,7 @@ These instructions assume you have a UCF account. To compile without one, check 
 6. Run `g++ main.cpp` and then run `./a.out` on the command line.
 
 
-### Compiling for Local Machine
+## Compiling for Local Machine
 This section assumes you don't have a UCF account, and want to compile/run the program.
 
 **Windows/Mac/Linux**
