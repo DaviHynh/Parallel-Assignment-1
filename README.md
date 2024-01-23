@@ -1,8 +1,8 @@
 # COP4520 Programming Assignment 1
 
 ### [Compile Instructions](#Compile-Instructions)
-- #### [Windows on Eustis3](#Compiling-for-Windows)
-- #### [Mac/Linux on Eustis3](#Compiling-for-Mac/Linux)
+- #### [Windows on Eustis3](#Compiling-for-Windows-on-Eustis3)
+- #### [Mac/Linux on Eustis3](#Compiling-for-Mac/Linux-on-Eustis3)
 - #### [Local Machine](#Compiling-for-Local-Machine)
 
 ### [Documentation](#Documentation)
