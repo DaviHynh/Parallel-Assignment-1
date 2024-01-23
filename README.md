@@ -9,10 +9,30 @@
 
 
 ## Program Documentation
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+My program uses the Sieve of Eratosthenes to generate all the prime numbers from 1 to 10^8.
+Each of the threads share a counter, and they are each given a unique number.
+The threads then check to see if that number is false in the vector.
+If the number is false, the thread calculates the multiples for that number, and sets the positions to true in the vector.
+If the number is true, the thread moves on to the next number.
+At the end, we loop through the vector to calculate the number/sum of primes, and the top 10 max primes.
 
+The Counter class tracks information about the sieve and includes variables like a shared_mutex, a vector of atomic bool, and an integer num.
+The shared_mutex is used to prevent deadlocking and preserve mutual exclusion for the integer num.
+Whenever a thread uses the getAndIncrement() method, the shared_mutex locks, and only allows one thread to access num.
+When the method finishes, it unlocks, and allows other threads to use that method.
 
+The vector of atomic bool is used so that multiple threads can access the vector at once, but only one thread may read/write into an index.
+Using a mutex to lock the entire vector results in a very slow process for updating booleans in the vector.
+However, using this approach, we can allow multiple threads to access the vector, but only 1 thread can access an element at a time.
+As such, the method setTrue() maintains thread safety, since only one thread may write into a bool at a time preventing data corruption.
 
+The work divided among the 8 threads is approximately equivalent.
+If some threads finish calculating multiples earlier than the other threads, they continue to advance the counter and repeat the process.
+This continues until the counter reaches 10^8.
+
+Compared to brute force, the Sieve of Eratosthenes runs much more efficiently.
+There is less computation for the sieve compared to brute forcing.
+However, the space complexity for the sieve is much greater.
 
 
 ## Compile Instructions
