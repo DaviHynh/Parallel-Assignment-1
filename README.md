@@ -3,7 +3,7 @@
 ### [Compile Instructions](#Compile-Instructions)
 - #### [Windows on Eustis3](#Compiling-for-Windows-on-Eustis3)
 - #### [Mac/Linux on Eustis3](#Compiling-for-Linux-or-Mac-on-Eustis3)
-- #### [Local Machine](#Compiling-for-Local-Machine)
+- #### [Local Machine (Recommended if you haven't used Eustis before)](#Compiling-for-Local-Machine)
 
 ### [Documentation](#Documentation-for-Program)
 
