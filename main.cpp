@@ -100,17 +100,15 @@ void findMultiples(int range, Counter &sharedCounter)
     }
 }
 
-// Main function that spawns 8 threads, starts an execution timer, and prints output to primes.txt.
+// Main function that starts a timer, spawns 8 threads, and prints output to primes.txt.
 int main(void)
 {
+    auto start = std::chrono::high_resolution_clock::now();
+
     // Calculating 10^8 numbers = 100000000.
     int range = 100000000;
     Counter sharedCounter(range);
     std::vector<std::thread> pool(8);
-
-    // Starting execution timer prior to spawning threads.
-    auto start = std::chrono::high_resolution_clock::now();
-
 
     // Spawn 8 threads for the Sieve of Eratosthenes.
     for (auto &t : pool)
@@ -123,13 +121,14 @@ int main(void)
         t.join();
     }
 
+    // Returns necessary information for the output file.
+    std::vector<unsigned long int> res = sharedCounter.getInformation();
 
     // Ending execution timer after threads complete.
     auto end = std::chrono::high_resolution_clock::now();
     auto executionTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
 
     // Outputting results to primes.txt.
-    std::vector<unsigned long int> res = sharedCounter.getInformation();
     std::ofstream output("primes.txt");
 
     output << "Execution Time: " << executionTime.count() << " Seconds, ";
