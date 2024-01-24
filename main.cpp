@@ -46,13 +46,13 @@ public:
     }
 
     // Returns total primes found, sum primes found, and top ten max primes.
-    std::vector<unsigned long int> getInformation()
+    std::vector<unsigned long long int> getInformation()
     {
         int n = primes.size();
-        std::vector<unsigned long int> result;
+        std::vector<unsigned long long int> result;
 
-        unsigned long int numOfPrimes = 0;
-        unsigned long int sumOfPrimes = 0;
+        unsigned long long int numOfPrimes = 0;
+        unsigned long long int sumOfPrimes = 0;
 
         // Calculates the number of all primes found and their sum.
         for (int i = 2; i < n; i++)
@@ -122,7 +122,7 @@ int main(void)
     }
 
     // Returns necessary information for the output file.
-    std::vector<unsigned long int> res = sharedCounter.getInformation();
+    std::vector<unsigned long long int> res = sharedCounter.getInformation();
 
     // Ending execution timer after threads complete.
     auto end = std::chrono::high_resolution_clock::now();
