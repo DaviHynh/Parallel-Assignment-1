@@ -34,6 +34,10 @@ Compared to brute force, the Sieve of Eratosthenes runs much more efficiently.
 There is less computation for the sieve compared to brute forcing.
 However, the space complexity for the sieve is much greater.
 
+When tested for correctness, I used https://t5k.org/howmany.html to check that the number of primes.
+I also used http://compoasso.free.fr/primelistweb/page/prime/liste_online_en.php to check the last 10 primes.
+When I tested with smaller ranges, I received expected results. I also ran multiple tests to try and get a different answer, but they all returned consistent values.
+
 There are some concerns with repeated computation when a thread checks an index set to false, before it is updated by another thread to true.
 However, this repeated computation does not affect the final result, since it continues to eliminate multiples.
 Additionally, this concern is rarely problematic since each thread begins sequentially, and multiples are often eliminated before the counter increments.
