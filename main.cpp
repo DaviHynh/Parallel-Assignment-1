@@ -28,6 +28,9 @@ public:
     // Returns the bool at the specified position.
     char checkPosition(int position)
     {
+        // Multiple threads/readers can read the counter's value at the same time.
+        // https://stackoverflow.com/questions/46049803/difference-between-shared-mutex-and-mutex-why-do-both-exist-in-c-17
+        // https://en.cppreference.com/w/cpp/thread/shared_mutex
         std::shared_lock lock(myMutex);
         return primes[position];
     }
@@ -35,6 +38,9 @@ public:
     // Grabs from the counter and increments it.
     int getAndIncrement()
     {
+        // Only one thread/writer can increment/write the counter's value.
+        // https://stackoverflow.com/questions/46049803/difference-between-shared-mutex-and-mutex-why-do-both-exist-in-c-17
+        // https://en.cppreference.com/w/cpp/thread/shared_mutex
         std::unique_lock lock(myMutex);
         return num++;
     }
